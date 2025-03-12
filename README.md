@@ -13,14 +13,14 @@ A demo app built on the dotnet core 9 and entity framework
 
 ### Starting SQL Server with Docker
 
-```ps
+```powershell
 docker compose up -d sql
 ```
 
 
 ### Create user jwts for local test
 
-```ps
+```powershell
 dotnet user-jwts create
 
 # get token info
@@ -49,7 +49,7 @@ dotnet user-jwts create --role Admin --scope "products:write"
 
 - Option 2: Use command
 
-    ```ps
+    ```powershell
     cd <repository_location>
     dotnet run -p Eshop.Api
 
