@@ -1,6 +1,6 @@
 ## E-Shop API Demo
 
-A demo app built on the dotnet core 9 and entity framework
+A demo api built on the top of .net core 9 and entity framework
 
 ### Prerequisite
 
@@ -21,24 +21,29 @@ docker compose up -d sql
 ### Create user jwts for local test
 
 ```powershell
-dotnet user-jwts create
+# create jwts for user with different role and permission
 
-# get token info
-dotnet user-jwts print <TOKEN_ID>
-
-# create jwt for user with admin role
-dotnet user-jwts create --role Admin
-
-# create jwt for user with staff role and read access
+# Staff with read permission
 dotnet user-jwts create --role Staff --scope "products:read"
-dotnet user-jwts create --role Staff --scope "products:write"
-dotnet user-jwts create --role Admin --scope "products:read"
-dotnet user-jwts create --role Admin --scope "products:write"
-
-# Update the tokens in the file test.http
+# Update the token in the file test.http
 # @STAFF_READ_TOKEN=<Staff Read Token>
+
+# e.g.
+# @STAFF_READ_TOKEN=eyJhbGciOiJIUxxxxxx.yyyyyy.zzzzz
+
+# Staff with write permission
+dotnet user-jwts create --role Staff --scope "products:write"
+# Update the token in the file test.http
 # @STAFF_WRITE_TOKEN=<Staff Write Token>
+
+# Admin with read permission
+dotnet user-jwts create --role Admin --scope "products:read"
+# Update the token in the file test.http
 # @ADMIN_READ_TOKEN=<Admin Read Token>
+
+# Admin with write permission
+dotnet user-jwts create --role Admin --scope "products:write"
+# Update the token in the file test.http
 # @ADMIN_WRITE_TOKEN=<Admin Write Token>
 
 ```
@@ -64,7 +69,7 @@ dotnet user-jwts create --role Admin --scope "products:write"
     # info: Microsoft.Hosting.Lifetime[0]
     #     Application started. Press Ctrl+C to shut down.
     # info: Microsoft.Hosting.Lifetime[0]
-        Hosting environment: Development
+    #    Hosting environment: Development
     ```
 
 

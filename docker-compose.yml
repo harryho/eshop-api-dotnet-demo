@@ -1,0 +1,10 @@
+version: '3'
+services:
+   sql:
+     image: "mcr.microsoft.com/mssql/server:2022-latest"
+     hostname: sql2022
+     environment:
+       - ACCEPT_EULA=Y
+       - SA_PASSWORD=Password@123
+     ports:
+       - "1433:1433"

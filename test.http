@@ -1,0 +1,75 @@
+## Test with Rest Client
+@PORT=<API PORT>
+
+@STAFF_READ_TOKEN=<Staff Read Token>
+@STAFF_WRITE_TOKEN=<Staff Write Token>
+@ADMIN_READ_TOKEN=<Admin Read Token>
+@ADMIN_WRITE_TOKEN=<Admin Write Token>
+
+
+### Add product
+# expect 201
+POST https://localhost:{{PORT}}/products HTTP/1.1
+content-type: application/json
+Authorization: bearer {{STAFF_WRITE_TOKEN}}
+
+{
+    "name": "Anta Air Zoom BB NXT",
+    "genre": "Basketball Shoes",
+    "unitPrice": "39.99",
+    "unitInStock": 11,
+    "releaseDate": "2020-09-30T00:00:00",
+    "imageUri": "https://dummyimage.com/200x200/eee/000"
+}
+
+### Add product 
+# expect 201
+POST https://localhost:{{PORT}}/products HTTP/1.1
+content-type: application/json
+Authorization: bearer {{STAFF_WRITE_TOKEN}}
+
+{
+    "name": "XTEP AntaCourt Royale",
+    "genre": "Tennis Shoes",
+    "unitPrice": "39.99",
+    "unitInStock": 11,
+    "releaseDate": "2021-09-30T00:00:00",
+    "imageUri": "https://dummyimage.com/200x200/eee/000"
+}
+
+### GET All products
+GET https://localhost:{{PORT}}/products HTTP/1.1
+Authorization: bearer {{STAFF_READ_TOKEN}}
+
+### Get product by id by default i.e. Version 1
+GET https://localhost:{{PORT}}/products/1 HTTP/1.1
+Authorization: bearer {{ADMIN_READ_TOKEN}}
+
+### Get product by id via Version 1 Api
+GET https://localhost:{{PORT}}/products/1?api-version=1.0 HTTP/1.1
+Authorization: bearer {{ADMIN_READ_TOKEN}}
+
+### Get product by id via Version 2 Api
+GET https://localhost:{{PORT}}/products/1?api-version=2.0 HTTP/1.1
+Authorization: bearer {{ADMIN_READ_TOKEN}}
+
+
+### Update product
+# expect 204
+PUT https://localhost:{{PORT}}/products/4 HTTP/1.1 
+content-type: application/json
+Authorization: bearer {{STAFF_WRITE_TOKEN}}
+
+{
+    "name": "Anta Waffle Racer Crater",
+    "genre": "Running Shoes",
+    "unitPrice": 22.88,
+    "unitInStock": 12,
+    "releaseDate": "2010-09-30T00:00:00",
+    "imageUri": "https://dummyimage.com/200x200/eee/000"
+}
+
+### Delete product
+# expect 204
+DELETE  https://localhost:{{PORT}}/products/1 HTTP/1.1 
+Authorization: bearer {{ADMIN_WRITE_TOKEN}}
