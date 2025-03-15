@@ -11,7 +11,7 @@
 # expect 201
 POST https://localhost:{{PORT}}/products HTTP/1.1
 content-type: application/json
-Authorization: bearer {{STAFF_WRITE_TOKEN}}
+Authorization: Bearer {{STAFF_WRITE_TOKEN}}
 
 {
     "name": "Anta Air Zoom BB NXT",
@@ -26,7 +26,7 @@ Authorization: bearer {{STAFF_WRITE_TOKEN}}
 # expect 201
 POST https://localhost:{{PORT}}/products HTTP/1.1
 content-type: application/json
-Authorization: bearer {{STAFF_WRITE_TOKEN}}
+Authorization: Bearer {{STAFF_WRITE_TOKEN}}
 
 {
     "name": "XTEP AntaCourt Royale",
@@ -39,26 +39,26 @@ Authorization: bearer {{STAFF_WRITE_TOKEN}}
 
 ### GET All products
 GET https://localhost:{{PORT}}/products HTTP/1.1
-Authorization: bearer {{STAFF_READ_TOKEN}}
+Authorization: Bearer {{STAFF_READ_TOKEN}}
 
 ### Get product by id by default i.e. Version 1
 GET https://localhost:{{PORT}}/products/1 HTTP/1.1
-Authorization: bearer {{ADMIN_READ_TOKEN}}
+Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 ### Get product by id via Version 1 Api
 GET https://localhost:{{PORT}}/products/1?api-version=1.0 HTTP/1.1
-Authorization: bearer {{ADMIN_READ_TOKEN}}
+Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 ### Get product by id via Version 2 Api
 GET https://localhost:{{PORT}}/products/1?api-version=2.0 HTTP/1.1
-Authorization: bearer {{ADMIN_READ_TOKEN}}
+Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 
 ### Update product
 # expect 204
 PUT https://localhost:{{PORT}}/products/4 HTTP/1.1 
 content-type: application/json
-Authorization: bearer {{STAFF_WRITE_TOKEN}}
+Authorization: Bearer {{STAFF_WRITE_TOKEN}}
 
 {
     "name": "Anta Waffle Racer Crater",
@@ -72,4 +72,4 @@ Authorization: bearer {{STAFF_WRITE_TOKEN}}
 ### Delete product
 # expect 204
 DELETE  https://localhost:{{PORT}}/products/1 HTTP/1.1 
-Authorization: bearer {{ADMIN_WRITE_TOKEN}}
+Authorization: Bearer {{ADMIN_WRITE_TOKEN}}
