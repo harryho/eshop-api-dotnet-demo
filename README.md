@@ -1,6 +1,6 @@
 ## E-Shop API Demo
 
-A demo api built on the top of .net core 9 and entity framework
+A demo api built on the top of .net core 9 and minimal api
 
 ### Prerequisite
 

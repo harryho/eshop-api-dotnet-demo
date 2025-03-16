@@ -21,32 +21,22 @@ public static class ProductsEndpoints
                           .WithParameterValidation();
 
         // Version 1
-        group.MapGet("/", async (IProductsRepository repository) =>
-         Results.Ok((await repository.GetAllAsync()).Select(p => p.AsDtoV1())))
-                .RequireAuthorization(Policies.StaffReadAccess)
-                .MapToApiVersion(1.0);
+        group.MapGet("/", GetAllProductsV1)
+        .RequireAuthorization(Policies.StaffReadAccess)
+        .MapToApiVersion(1.0);
 
 
-        group.MapGet("/{id}", async Task<Results<Ok<ProductDtoV1>, NotFound>> (IProductsRepository repository, int id) =>
-        {
-            Product? product = await repository.GetAsync(id);
-            return product is not null ? TypedResults.Ok(product.AsDtoV1()) : TypedResults.NotFound();
-        })
+        group.MapGet("/{id}", GetProductV1ById)
        .WithName(GetProductV1EndpointName)
        .RequireAuthorization(Policies.AdminReadAccess)
-       .MapToApiVersion(1.0);;
+       .MapToApiVersion(1.0); ;
 
         // Version 2
-        group.MapGet("/", async (IProductsRepository repository) =>
-         Results.Ok((await repository.GetAllAsync()).Select(p => p.AsDtoV2())))
-                .RequireAuthorization(Policies.StaffReadAccess).MapToApiVersion(2.0);
+        group.MapGet("/", GetAllProductsV2)
+        .RequireAuthorization(Policies.StaffReadAccess).MapToApiVersion(2.0);
 
 
-        group.MapGet("/{id}", async Task<Results<Ok<ProductDtoV2>, NotFound>> (IProductsRepository repository, int id) =>
-        {
-            Product? product = await repository.GetAsync(id);
-            return product is not null ? TypedResults.Ok(product.AsDtoV2()) : TypedResults.NotFound();
-        })
+        group.MapGet("/{id}", GetProductV2ById)
        .RequireAuthorization(Policies.AdminReadAccess)
        .MapToApiVersion(2.0);
 
@@ -103,4 +93,30 @@ public static class ProductsEndpoints
 
         return group;
     }
+
+    public static async Task<Ok<IEnumerable<ProductDtoV1>>> GetAllProductsV1(IProductsRepository repository)
+    {
+        var products = await repository.GetAllAsync();
+        return TypedResults.Ok(products.Select(static p => p.AsDtoV1()));
+    }
+
+    public static async Task<Results<Ok<ProductDtoV1>, NotFound>> GetProductV1ById(IProductsRepository repository, int id)
+    {
+        Product? product = await repository.GetAsync(id);
+        return product is not null ? TypedResults.Ok(product.AsDtoV1()) : TypedResults.NotFound();
+    }
+
+    public static async Task<Ok<IEnumerable<ProductDtoV2>>> GetAllProductsV2(IProductsRepository repository)
+    {
+        var products = await repository.GetAllAsync();
+        return TypedResults.Ok(products.Select(static p => p.AsDtoV2()));
+    }
+
+    public static async Task<Results<Ok<ProductDtoV2>, NotFound>> GetProductV2ById(IProductsRepository repository, int id)
+    {
+        Product? product = await repository.GetAsync(id);
+        return product is not null ? TypedResults.Ok(product.AsDtoV2()) : TypedResults.NotFound();
+    }
+
+
 }

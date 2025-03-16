@@ -6,12 +6,14 @@ namespace Eshop.Api.Data;
 
 public class EshopContext : DbContext
 {
+    public EshopContext()
+    {
+    }
     public EshopContext(DbContextOptions<EshopContext> options)
         : base(options)
     {
     }
-
-    public DbSet<Product> Products => Set<Product>();
+    public virtual DbSet<Product> Products => Set<Product>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
