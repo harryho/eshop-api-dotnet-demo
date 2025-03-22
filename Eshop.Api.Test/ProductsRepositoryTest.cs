@@ -30,12 +30,12 @@ public class ProductsRepositoryTest
 
 
     [Fact]
-    public async void GetAllAsync_With_0_ProductReturned()
+    public async void GetAllAsync_With_0_Product_Retrieved()
     {
         // Arrange
         var mockLogger = new Mock<ILogger<ProductsRepository>>();
         var dbContext = CreateTestDbContext();
-        var mockRepository = new ProductsRepository(dbContext , mockLogger.Object);
+        var mockRepository = new ProductsRepository(dbContext, mockLogger.Object);
 
         // Act
         var result = await mockRepository.GetAllAsync();
@@ -44,7 +44,7 @@ public class ProductsRepositoryTest
     }
 
     [Fact]
-    public async void GetAllAsync_With_3_ProductsReturned()
+    public async void GetAllAsync_With_3_Products_Retrieved()
     {
         // Arrange
         var mockLogger = new Mock<ILogger<ProductsRepository>>();
@@ -60,7 +60,7 @@ public class ProductsRepositoryTest
     }
 
     [Fact]
-    public async void GetAsync_ById_Success()
+    public async void GetAsyncById_With_Product_Retrieved()
     {
         // Arrange
         var mockLogger = new Mock<ILogger<ProductsRepository>>();
@@ -71,8 +71,42 @@ public class ProductsRepositoryTest
         // Act
         var result = await mockRepository.GetAsync(1);
         // Accept
-        Assert.True(result!=null);
+        Assert.True(result != null);
+    }
 
+
+    [Fact]
+    public async void GetAsyncById_Without_Product_Retrieved()
+    {
+        // Arrange
+        var mockLogger = new Mock<ILogger<ProductsRepository>>();
+        var dbContext = CreateTestDbContext();
+        PrepareTestData(dbContext);
+        var mockRepository = new ProductsRepository(dbContext, mockLogger.Object);
+
+        // Act
+        var result = await mockRepository.GetAsync(4);
+        // Accept
+        Assert.True(result == null);
+    }
+
+
+    [Fact]
+    public async void AddProduct_Success()
+    {
+        // Arrange
+        var mockLogger = new Mock<ILogger<ProductsRepository>>();
+        var dbContext = CreateTestDbContext();
+        PrepareTestData(dbContext);
+        var mockRepository = new ProductsRepository(dbContext, mockLogger.Object);
+        var newProduct = await mockRepository.GetAsync(1);
+        newProduct.Id = 4;
+        // Act
+        if (newProduct != null)
+            await mockRepository.CreateAsync(newProduct);
+        var result = await mockRepository.GetAllAsync();
+        // Accept
+        Assert.True(4 == result.Count());
     }
 
     private EshopContext CreateTestDbContext()
@@ -82,9 +116,11 @@ public class ProductsRepositoryTest
                 .Options);
     }
 
+
+
     private void PrepareTestData(EshopContext context)
     {
-    List<Product> products = new()
+        List<Product> products = new()
     {
         new Product()
         {
@@ -118,8 +154,8 @@ public class ProductsRepositoryTest
         }
     };
 
-            context.AddRange(products);
-            context.SaveChanges();
-        }
-    
+        context.AddRange(products);
+        context.SaveChanges();
+    }
+
 }

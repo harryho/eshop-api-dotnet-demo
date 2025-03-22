@@ -10,7 +10,7 @@ namespace Eshop.Api.Test
     public class ProductsEndpointsTest
     {
         [Fact]
-        public async Task Test_GetAllProductsV1()
+        public async Task GetAllProductsV1_With_2_V1_Product_Retrieved()
         {
             // Arrange
             var mock = new Mock<IProductsRepository>();
@@ -36,8 +36,7 @@ namespace Eshop.Api.Test
             UnitInStock = 31,
             ReleaseDate = new DateTime(2021, 7, 30),
             ImageUri = "https://dummyimage.com/200x200/eee/000"
-        },
-                });
+        },});
 
             // Act
             var result = await ProductsEndpoints.GetAllProductsV1(mock.Object);
@@ -61,6 +60,36 @@ namespace Eshop.Api.Test
         }
 
         [Fact]
+        public async Task GetProductV1ById_With_1_ProductV1_Retrieved()
+        {
+            // Arrange
+            var mock = new Mock<IProductsRepository>();
+
+            mock.Setup((m) => m.GetAsync(It.IsAny<int>()))
+                    .ReturnsAsync(new Product
+                    {
+                        Id = 1,
+                        Name = "Anta Air Zoom BB NXT",
+                        Genre = "Basketball Shoes",
+                        UnitPrice = 47.99M,
+                        UnitInStock = 11,
+                        ReleaseDate = new DateTime(2020, 2, 1),
+                        ImageUri = "https://dummyimage.com/200x200/eee/000"
+                    });
+
+            // Act
+            var result = await ProductsEndpoints.GetProductV1ById(mock.Object, 1);
+
+            //Assert
+            Assert.IsType<Ok<ProductDtoV1>>(result.Result);
+            Assert.NotNull(result.Result);
+            var pv1 = ((Ok<ProductDtoV1>)result.Result).Value;
+            Assert.Equal(1, pv1?.Id);
+            Assert.Equal("Anta Air Zoom BB NXT", pv1?.Name);
+
+        }
+
+        [Fact]
         public async Task Test_GetAllProductsV2()
         {
             // Arrange
@@ -68,27 +97,27 @@ namespace Eshop.Api.Test
 
             mock.Setup(m => m.GetAllAsync())
                 .ReturnsAsync(new List<Product> {
-             new Product()
-                {
-                    Id = 1,
-                    Name = "Anta Air Zoom BB NXT",
-                    Genre = "Basketball Shoes",
-                    UnitPrice = 47.99M,
-                    UnitInStock = 11,
-                    ReleaseDate = new DateTime(2020, 2, 1),
-                    ImageUri = "https://dummyimage.com/200x200/eee/000"
-                },
-                new Product()
-                {
-                    Id = 2,
-                    Name = "XTEP AntaCourt Royale",
-                    Genre = "Tennis Shoes",
-                    UnitPrice = 33.85M,
-                    UnitInStock = 31,
-                    ReleaseDate = new DateTime(2021, 7, 30),
-                    ImageUri = "https://dummyimage.com/200x200/eee/000"
-                },
-             });
+                    new Product()
+                        {
+                            Id = 1,
+                            Name = "Anta Air Zoom BB NXT",
+                            Genre = "Basketball Shoes",
+                            UnitPrice = 47.99M,
+                            UnitInStock = 11,
+                            ReleaseDate = new DateTime(2020, 2, 1),
+                            ImageUri = "https://dummyimage.com/200x200/eee/000"
+                        },
+                        new Product()
+                        {
+                            Id = 2,
+                            Name = "XTEP AntaCourt Royale",
+                            Genre = "Tennis Shoes",
+                            UnitPrice = 33.85M,
+                            UnitInStock = 31,
+                            ReleaseDate = new DateTime(2021, 7, 30),
+                            ImageUri = "https://dummyimage.com/200x200/eee/000"
+                        },
+                    });
 
             // Act
             var result = await ProductsEndpoints.GetAllProductsV2(mock.Object);
@@ -111,6 +140,39 @@ namespace Eshop.Api.Test
                 Assert.True(product2.RetailPrice > product2.UnitPrice);
 
             });
+        }
+
+
+        [Fact]
+        public async Task GetProductV2ById_With_1_ProductV2_Retrieved()
+        {
+            // Arrange
+            var mock = new Mock<IProductsRepository>();
+
+            mock.Setup(m => m.GetAsync(It.IsAny<int>()))
+                .ReturnsAsync(new Product()
+                {
+                    Id = 1,
+                    Name = "Anta Air Zoom BB NXT",
+                    Genre = "Basketball Shoes",
+                    UnitPrice = 47.99M,
+                    UnitInStock = 11,
+                    ReleaseDate = new DateTime(2020, 2, 1),
+                    ImageUri = "https://dummyimage.com/200x200/eee/000"
+                });
+
+            // Act
+            var result = await ProductsEndpoints.GetProductV2ById(mock.Object, 1);
+
+            //Assert
+            Assert.IsType<Ok<ProductDtoV2>>(result.Result);
+
+            Assert.NotNull(result.Result);
+
+            var pv2 = ((Ok<ProductDtoV2>)result.Result).Value;
+            Assert.Equal(1, pv2?.Id);
+            Assert.Equal("Anta Air Zoom BB NXT", pv2?.Name);
+            Assert.True(pv2?.RetailPrice > pv2?.UnitPrice);
         }
     }
 }

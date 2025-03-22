@@ -72,6 +72,7 @@ public class ProductsRepository : IProductsRepository
         }
 
         return dbContext.Products
-                        .Where(product => product.Name.Contains(filter) || product.Genre.Contains(filter));
+                        .Where(product => product.Name.Contains(filter)
+                         || product.Genre.Contains(filter));
     }
 }
