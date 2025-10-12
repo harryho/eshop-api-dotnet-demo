@@ -61,7 +61,7 @@ dotnet user-jwts create --role Admin --scope "products:write"
 
 ```
 
-##~~~~# Token Expiration
+### Token Expiration
 
 The generated JWT tokens have an expiration of approximately 90 days, making them suitable for extended testing periods.
 
