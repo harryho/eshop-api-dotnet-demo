@@ -17,7 +17,12 @@ builder.Services.AddApiVersioning(options=>{
     options.AssumeDefaultVersionWhenUnspecified = true;
 }).AddApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 
-builder.Services.AddHttpLogging();
+builder.Services.AddHttpLogging(options=>{
+    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+    options.MediaTypeOptions.AddText("application/json");
+    options.RequestBodyLogLimit = 4096;
+    options.ResponseBodyLogLimit = 4096;
+});
 builder.Services.AddEshopCors(builder.Configuration);
 
 builder.Services.AddSwaggerGen()

@@ -4,7 +4,7 @@ A demo api built on the top of .net core 9 and minimal api
 
 ### Prerequisite
 
-- Dotnet Core 9
+- Dotnet Core 8
 - Visual Studio Code
   - C# Extension
   - Rest Client Extension
@@ -14,13 +14,26 @@ A demo api built on the top of .net core 9 and minimal api
 ### Starting SQL Server with Docker
 
 ```powershell
-docker compose up -d sql
+docker compose up -d mssql
 ```
 
 
-### Create user jwts for local test
+### Create user jwts for local test via script (Recommended)
 
 ```powershell
+.\generate-jwt-tokens.ps1
+```
+
+- The scripts will overwrite any existing token values in local-test.http
+- If you need to regenerate tokens, simply run the script again
+- The tokens are specific to your local development environment
+
+### Create user jwts for local test (Manual)
+
+```powershell
+# Copying template file to local-test.http
+copy -Force local-test-template.http local-test.http 
+
 # create jwts for user with different role and permission
 
 # Staff with read permission
@@ -48,7 +61,13 @@ dotnet user-jwts create --role Admin --scope "products:write"
 
 ```
 
+### Token Expiration
+
+The generated JWT tokens have an expiration of approximately 90 days, making them suitable for extended testing periods.
+
 ### Starting E-Shop  API
+
+> Eshop.Api project will create the database Eshop if it doesn't exist.
 
 - Option 1: Run & Debug the E-Shop API from Visual Studio Code (F5)
 
@@ -59,7 +78,9 @@ dotnet user-jwts create --role Admin --scope "products:write"
     dotnet run -p Eshop.Api --launch-profile https
 
     # info: Microsoft.EntityFrameworkCore.Migrations[20411]
-    #   Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock # for more information if this takes too long.
+    #   Acquiring an exclusive lock for migration application. 
+    # See https://aka.ms/efcore-docs-migrations-lock 
+    # for more information if this takes too long.
     # info: Microsoft.EntityFrameworkCore.Migrations[20405]
     #     No migrations were applied. The database is already up to date.
     # info: DB Initializer[9]
@@ -113,8 +134,6 @@ Transfer-Encoding: chunked
 ]
 ```
  
-
-
 ### Swagger 
 
 Access Swagger on browser
@@ -123,3 +142,9 @@ Access Swagger on browser
 ![version1](screenshots/version1-screenshot.png)
 
 <!-- ![version2](screenshots/version2-screenshot.png) -->
+
+### Drop the database
+
+```powershell
+.\drop-db.ps1
+```

@@ -1,17 +1,19 @@
 ## Test with Rest Client
-@PORT=<API PORT>
+# 7236 is the port configured in launchSettings.json for https
+# 5123 is for http, but http is not enabled in launchSettings.json
+# you can change the port if needed
+@PORT=7236
 
 @STAFF_READ_TOKEN=<Staff Read Token>
 @STAFF_WRITE_TOKEN=<Staff Write Token>
 @ADMIN_READ_TOKEN=<Admin Read Token>
 @ADMIN_WRITE_TOKEN=<Admin Write Token>
 
-
 ### Add product
 # expect 201
 POST https://localhost:{{PORT}}/products HTTP/1.1
 content-type: application/json
-Authorization: Bearer {{STAFF_WRITE_TOKEN}}
+Authorization: Bearer {{ADMIN_WRITE_TOKEN}}
 
 {
     "name": "Anta Air Zoom BB NXT",
@@ -22,8 +24,8 @@ Authorization: Bearer {{STAFF_WRITE_TOKEN}}
     "imageUri": "https://dummyimage.com/200x200/eee/000"
 }
 
-### Add product 
-# expect 201
+### Add product --
+# expect 403
 POST https://localhost:{{PORT}}/products HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{STAFF_WRITE_TOKEN}}
@@ -38,27 +40,31 @@ Authorization: Bearer {{STAFF_WRITE_TOKEN}}
 }
 
 ### GET All products
+
 GET https://localhost:{{PORT}}/products HTTP/1.1
 Authorization: Bearer {{STAFF_READ_TOKEN}}
 
 ### Get product by id by default i.e. Version 1
+# expect 200 or 404 if not found
 GET https://localhost:{{PORT}}/products/1 HTTP/1.1
 Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 ### Get product by id via Version 1 Api
-GET https://localhost:{{PORT}}/products/1?api-version=1.0 HTTP/1.1
+# expect 200 or 404 if not found
+GET https://localhost:{{PORT}}/products/2?api-version=1.0 HTTP/1.1
 Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 ### Get product by id via Version 2 Api
-GET https://localhost:{{PORT}}/products/1?api-version=2.0 HTTP/1.1
+# expect 200 or 404 if not found and with retailPrice field
+GET https://localhost:{{PORT}}/products/2?api-version=2.0 HTTP/1.1
 Authorization: Bearer {{ADMIN_READ_TOKEN}}
 
 
 ### Update product
-# expect 204
-PUT https://localhost:{{PORT}}/products/4 HTTP/1.1 
+# expect 204 or 404 if not found
+PUT https://localhost:{{PORT}}/products/2 HTTP/1.1 
 content-type: application/json
-Authorization: Bearer {{STAFF_WRITE_TOKEN}}
+Authorization: Bearer {{ADMIN_WRITE_TOKEN}}
 
 {
     "name": "Anta Waffle Racer Crater",
