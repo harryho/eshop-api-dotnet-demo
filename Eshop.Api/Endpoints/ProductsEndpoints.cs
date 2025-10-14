@@ -79,7 +79,8 @@ public static class ProductsEndpoints
         Product? product = await repository.GetAsync(id);
         return product is not null ? TypedResults.Ok(product.AsDtoV2()) : TypedResults.NotFound();
     }
-public static async Task<CreatedAtRoute<ProductDtoV1>> CreateProduct(IProductsRepository repository, CreateProductDto productDto)
+
+    public static async Task<CreatedAtRoute<ProductDtoV1>> CreateProduct(IProductsRepository repository, CreateProductDto productDto)
     {
         Product product = new()
         {
