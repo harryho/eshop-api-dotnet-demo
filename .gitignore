@@ -32,6 +32,11 @@ bld/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Coverage reports
+TestResults/
+*.coverage
+*.coveragexml
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml
@@ -291,5 +296,9 @@ __pycache__/
 *.bak
 *.backup
 
-*.cmd
-*.sh
+# Local test file (generated from template)
+local-test.http
+
+# SQL Server connection strings
+appsettings.Local.json
+appsettings.*.local.json

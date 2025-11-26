@@ -1,7 +1,6 @@
 using Eshop.Api.Auth;
 using Eshop.Api.Extensions;
 using Eshop.Api.Data;
-using Eshop.Api.Endpoints;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.Options;
 
@@ -11,6 +10,8 @@ builder.Services.AddRepositories(builder.Configuration);
 
 builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddEshopAuthorization();
+
+builder.Services.AddControllers();
 
 builder.Services.AddApiVersioning(options=>{
     options.DefaultApiVersion = new(1.0);
@@ -38,7 +39,9 @@ await app.Services.InitializeDbAsync();
 
 app.UseHttpLogging();
 
-app.MapProductsEndpoints();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.UseEshopSwagger();
 

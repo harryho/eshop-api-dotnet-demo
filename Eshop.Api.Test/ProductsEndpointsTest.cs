@@ -1,13 +1,13 @@
-﻿using Eshop.Api.Dtos;
-using Eshop.Api.Endpoints;
+﻿using Eshop.Api.Controllers;
+using Eshop.Api.Dtos;
 using Eshop.Api.Entities;
 using Eshop.Api.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace Eshop.Api.Test
 {
-    public class ProductsEndpointsTest
+    public class ProductsControllerTest
     {
         [Fact]
         public async Task GetAllProductsV1_With_2_V1_Product_Retrieved()
@@ -38,15 +38,18 @@ namespace Eshop.Api.Test
             ImageUri = "https://dummyimage.com/200x200/eee/000"
         },});
 
+            var controller = new ProductsController(mock.Object);
+
             // Act
-            var result = await ProductsEndpoints.GetAllProductsV1(mock.Object);
+            var result = await controller.GetAllProductsV1();
 
             //Assert
-            Assert.IsType<Ok<IEnumerable<ProductDtoV1>>>(result);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var products = Assert.IsAssignableFrom<IEnumerable<ProductDtoV1>>(okResult.Value);
 
-            Assert.NotNull(result.Value);
-            Assert.NotEmpty(result.Value);
-            Assert.Collection(result.Value, product1 =>
+            Assert.NotNull(products);
+            Assert.NotEmpty(products);
+            Assert.Collection(products, product1 =>
             {
                 Assert.Equal(1, product1.Id);
                 Assert.Equal("Anta Air Zoom BB NXT", product1.Name);
@@ -77,15 +80,16 @@ namespace Eshop.Api.Test
                         ImageUri = "https://dummyimage.com/200x200/eee/000"
                     });
 
+            var controller = new ProductsController(mock.Object);
+
             // Act
-            var result = await ProductsEndpoints.GetProductV1ById(mock.Object, 1);
+            var result = await controller.GetProductV1ById(1);
 
             //Assert
-            Assert.IsType<Ok<ProductDtoV1>>(result.Result);
-            Assert.NotNull(result.Result);
-            var pv1 = ((Ok<ProductDtoV1>)result.Result).Value;
-            Assert.Equal(1, pv1?.Id);
-            Assert.Equal("Anta Air Zoom BB NXT", pv1?.Name);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pv1 = Assert.IsType<ProductDtoV1>(okResult.Value);
+            Assert.Equal(1, pv1.Id);
+            Assert.Equal("Anta Air Zoom BB NXT", pv1.Name);
 
         }
 
@@ -119,15 +123,18 @@ namespace Eshop.Api.Test
                         },
                     });
 
+            var controller = new ProductsController(mock.Object);
+
             // Act
-            var result = await ProductsEndpoints.GetAllProductsV2(mock.Object);
+            var result = await controller.GetAllProductsV2();
 
             //Assert
-            Assert.IsType<Ok<IEnumerable<ProductDtoV2>>>(result);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var products = Assert.IsAssignableFrom<IEnumerable<ProductDtoV2>>(okResult.Value);
 
-            Assert.NotNull(result.Value);
-            Assert.NotEmpty(result.Value);
-            Assert.Collection(result.Value, product1 =>
+            Assert.NotNull(products);
+            Assert.NotEmpty(products);
+            Assert.Collection(products, product1 =>
             {
                 Assert.Equal(1, product1.Id);
                 Assert.Equal("Anta Air Zoom BB NXT", product1.Name);
@@ -161,18 +168,17 @@ namespace Eshop.Api.Test
                     ImageUri = "https://dummyimage.com/200x200/eee/000"
                 });
 
+            var controller = new ProductsController(mock.Object);
+
             // Act
-            var result = await ProductsEndpoints.GetProductV2ById(mock.Object, 1);
+            var result = await controller.GetProductV2ById(1);
 
             //Assert
-            Assert.IsType<Ok<ProductDtoV2>>(result.Result);
-
-            Assert.NotNull(result.Result);
-
-            var pv2 = ((Ok<ProductDtoV2>)result.Result).Value;
-            Assert.Equal(1, pv2?.Id);
-            Assert.Equal("Anta Air Zoom BB NXT", pv2?.Name);
-            Assert.True(pv2?.RetailPrice > pv2?.UnitPrice);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pv2 = Assert.IsType<ProductDtoV2>(okResult.Value);
+            Assert.Equal(1, pv2.Id);
+            Assert.Equal("Anta Air Zoom BB NXT", pv2.Name);
+            Assert.True(pv2.RetailPrice > pv2.UnitPrice);
         }
     }
 }

@@ -1,20 +1,54 @@
 ## E-Shop API Demo
 
-A demo api built on the top of .net core 9 and minimal api
+A demo API built on top of .NET Core 8 with MVC API Controllers
 
 ### Prerequisite
 
-- Dotnet Core 8
+- .NET 8 SDK
 - Visual Studio Code
   - C# Extension
   - Rest Client Extension
 - Docker
 
+### Installing .NET 8 SDK
+
+**Recommended: Using Scoop (Windows)**
+
+[Scoop](https://scoop.sh/) is a command-line installer for Windows that makes it easy to install and manage multiple .NET SDK versions.
+
+```powershell
+# Install Scoop (if not already installed)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+
+# Add the main bucket (if not already added)
+scoop bucket add main
+
+# Install .NET 8 SDK
+scoop install dotnet8-sdk
+
+# Verify installation
+dotnet --version
+
+# Install other version of .NET  SDK
+scoop install dotnet10-sdk
+```
+
+**Benefits of using Scoop:**
+- Easy side-by-side installation of multiple .NET versions
+- Simple switching between SDK versions with `scoop reset dotnet8-sdk`
+- No need for manual PATH configuration
+- Clean uninstallation when needed
+
+**Alternative: Direct Download**
+
+Download and install from [Microsoft .NET Download](https://dotnet.microsoft.com/download/dotnet/8.0)
+
 
 ### Starting SQL Server with Docker
 
 ```powershell
-docker compose up -d mssql
+docker compose up -d mssql-infra
 ```
 
 
@@ -69,13 +103,52 @@ The generated JWT tokens have an expiration of approximately 90 days, making the
 
 > Eshop.Api project will create the database Eshop if it doesn't exist.
 
+#### Building the project
+
+**Windows (PowerShell):**
+
+```powershell
+# Build in Debug mode
+.\build.ps1
+
+# Clean and build
+.\build.ps1 -Clean
+
+# Build in Release mode
+.\build.ps1 -Release
+```
+
+**Linux/macOS (Bash):**
+
+```bash
+# Make the script executable (first time only)
+chmod +x build.sh
+
+# Build in Debug mode
+./build.sh
+
+# Clean and build
+./build.sh --clean
+
+# Build in Release mode
+./build.sh --release
+```
+
+**Or using dotnet CLI directly:**
+
+```bash
+dotnet build
+```
+
+#### Running the API
+
 - Option 1: Run & Debug the E-Shop API from Visual Studio Code (F5)
 
 - Option 2: Use command
 
     ```powershell
     cd <repository_location>
-    dotnet run -p Eshop.Api --launch-profile https
+    dotnet run --project Eshop.Api --launch-profile https
 
     # info: Microsoft.EntityFrameworkCore.Migrations[20411]
     #   Acquiring an exclusive lock for migration application. 
@@ -142,6 +215,93 @@ Access Swagger on browser
 ![version1](screenshots/version1-screenshot.png)
 
 <!-- ![version2](screenshots/version2-screenshot.png) -->
+
+### Running Tests
+
+The project includes automated unit tests for the API controllers and repositories.
+
+#### Using the test script (Recommended)
+
+**Windows (PowerShell):**
+
+```powershell
+# Run all tests with build
+.\test.ps1
+
+# Run tests without rebuilding (faster)
+.\test.ps1 -NoBuild
+
+# Run specific tests using a filter
+.\test.ps1 -Filter "GetProductV1*"
+
+# Run tests with detailed output
+.\test.ps1 -Detailed
+
+# Run tests with code coverage
+.\test.ps1 -Coverage
+
+# Run tests with coverage (no build)
+.\test.ps1 -NoBuild -Coverage
+
+# Combine options
+.\test.ps1 -NoBuild -Filter "GetAllProducts*" -Detailed
+```
+
+**Linux/macOS (Bash):**
+
+```bash
+# Make the script executable (first time only)
+chmod +x test.sh
+
+# Run all tests with build
+./test.sh
+
+# Run tests without rebuilding (faster)
+./test.sh --no-build
+
+# Run specific tests using a filter
+./test.sh --filter "GetProductV1*"
+
+# Run tests with detailed output
+./test.sh --detailed
+
+# Run tests with code coverage
+./test.sh --coverage
+
+# Run tests with coverage (no build)
+./test.sh --no-build --coverage
+
+# Combine options
+./test.sh --no-build --filter "GetAllProducts*" --detailed
+```
+
+**Test script features:**
+- Checks for and stops any running dotnet processes
+- Switches to .NET 8 SDK (Windows: `scoop reset dotnet8-sdk`)
+- Verifies the SDK version
+- Runs the test suite
+- Provides colored output and test summary
+- **Generates HTML coverage reports** (with coverage flag)
+  - Automatically installs ReportGenerator tool if needed
+  - Creates detailed HTML report in `TestResults/CoverageReport/`
+  - Shows coverage summary in console
+  - Optionally opens report in browser
+
+#### Using dotnet CLI directly
+
+```bash
+# Run all tests
+dotnet test
+
+# Run tests without building
+dotnet test --no-build
+
+# Run tests with detailed output
+dotnet test --verbosity detailed
+
+# Filter tests
+dotnet test --filter "GetProductV1*"
+```
 
 ### Drop the database
 
