@@ -5,7 +5,7 @@ A demo API built on top of .NET Core 8 with MVC API Controllers
 ### Architecture
 
 ```mermaid
-graph TB
+flowchart TB
     subgraph Client["Client Layer"]
         HTTP[REST Client / Swagger UI]
     end
@@ -52,12 +52,12 @@ graph TB
     REPO --> EF
     EF <--> DB
 
-    style Client fill:#e3f2fd
-    style API fill:#c8e6c9
-    style Middleware fill:#b2dfdb
-    style Controller fill:#a5d6a7
-    style Business fill:#fff9c4
-    style Data fill:#ffccbc
+    style Client fill:#d3d3d3
+    style API fill:#d3d3df
+    style Middleware fill:#d3d3d3
+    style Controller fill:#d3d3d3
+    style Business fill:#d3d3d3
+    style Data fill:#d3d3d3
 ```
 
 #### Key Architectural Components
