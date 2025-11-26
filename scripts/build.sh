@@ -3,9 +3,9 @@
 # Build script for Eshop API project using .NET 8 SDK
 #
 # Usage:
-#   ./build.sh           - Build in Debug mode
-#   ./build.sh --clean   - Clean before building
-#   ./build.sh --release - Build in Release configuration
+#   ./scripts/build.sh           - Build in Debug mode
+#   ./scripts/build.sh --clean   - Clean before building
+#   ./scripts/build.sh --release - Build in Release configuration
 #
 
 set -e  # Exit on error
@@ -32,7 +32,7 @@ for arg in "$@"; do
             shift
             ;;
         --help|-h)
-            echo "Usage: ./build.sh [OPTIONS]"
+            echo "Usage: ./scripts/build.sh [OPTIONS]"
             echo ""
             echo "Options:"
             echo "  --clean, -c     Clean before building"

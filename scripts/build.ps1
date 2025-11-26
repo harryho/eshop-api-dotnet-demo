@@ -9,13 +9,13 @@
 .PARAMETER Release
     Build in Release configuration (default is Debug)
 .EXAMPLE
-    .\build.ps1
+    .\scripts\build.ps1
     Build the solution in Debug mode
 .EXAMPLE
-    .\build.ps1 -Clean
+    .\scripts\build.ps1 -Clean
     Clean and then build
 .EXAMPLE
-    .\build.ps1 -Release
+    .\scripts\build.ps1 -Release
     Build in Release configuration
 #>
 

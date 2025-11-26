@@ -14,16 +14,16 @@
 .PARAMETER Coverage
     Collect code coverage and generate HTML report
 .EXAMPLE
-    .\test.ps1
+    .\scripts\test.ps1
     Run all tests with build
 .EXAMPLE
-    .\test.ps1 -NoBuild
+    .\scripts\test.ps1 -NoBuild
     Run tests without rebuilding
 .EXAMPLE
-    .\test.ps1 -Filter "GetProductV1*" -Detailed
+    .\scripts\test.ps1 -Filter "GetProductV1*" -Detailed
     Run only tests matching the pattern with detailed output
 .EXAMPLE
-    .\test.ps1 -Coverage
+    .\scripts\test.ps1 -Coverage
     Run tests and generate code coverage report
 #>
 

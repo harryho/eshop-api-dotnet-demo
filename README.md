@@ -5,100 +5,59 @@ A demo API built on top of .NET Core 8 with MVC API Controllers
 ### Architecture
 
 ```mermaid
-flowchart TB
-    subgraph ClientLayer["Client Layer"]
-        C1[REST Client]
-        C2[Swagger UI]
-        C3[HTTP Client]
+graph TB
+    subgraph Client["Client Layer"]
+        HTTP[REST Client / Swagger UI]
     end
 
-    subgraph APIGateway["API Gateway"]
-        API["Minimal API"]
-        V1[API Version 1.0]
-        V2[API Version 2.0]
+    subgraph API["ASP.NET Core Web API"]
+        direction TB
+        KESTREL[Kestrel Web Server]
+        
+        subgraph Middleware["Middleware Pipeline"]
+            direction LR
+            MW1[Exception Handler] --> MW2[CORS]
+            MW2 --> MW3[Authentication]
+            MW3 --> MW4[Authorization]
+        end
+        
+        subgraph Controller["ProductsController"]
+            direction TB
+            V1[API v1.0]
+            V2[API v2.0]
+            ACTIONS["GET /products<br/>GET /products/{id}<br/>POST /products<br/>PUT /products/{id}<br/>DELETE /products/{id}"]
+        end
+        
+        KESTREL --> Middleware
+        Middleware --> V1 & V2
+        V1 --> ACTIONS
+        V2 --> ACTIONS
     end
 
-    subgraph AuthLayer["Authentication and Authorization"]
-        JWT[JWT Bearer Authentication]
-        AUTH["Authorization Policies"]
+    subgraph Business["Business Layer"]
+        REPO[ProductsRepository]
+        ENTITY[Product Entity]
+        DTO[DTOs V1/V2]
     end
 
-    subgraph AppLayer["Application Layer"]
-        ENDPOINTS["Products Endpoints"]
-        MIDDLEWARE["Middleware Pipeline"]
-        E1["Exception Handler"]
-        E2["HTTP Logging"]
-        E3["CORS"]
-        E4["Parameter Validation"]
-    end
-
-    subgraph BusinessLayer["Business Layer"]
-        REPO["Repositories"]
-        ENTITIES["Domain Entities"]
-        DTOS["DTOs"]
-    end
-
-    subgraph DataLayer["Data Layer"]
+    subgraph Data["Data Layer"]
         EF[Entity Framework Core]
-        CONTEXT["EshopContext<br/>DbContext"]
-        MIGRATIONS["EF Migrations"]
+        DB[(SQL Server<br/>Database)]
     end
 
-    subgraph Infrastructure["Infrastructure"]
-        DOCKER["Docker Container<br/>SQL Server"]
-        CONFIG["Configuration"]
-    end
-
-    Database[("MS Sql Database")]
-
-    %% Client connections
-    C1 --> API
-    C2 --> API
-    C3 --> API
-
-    %% API flow
-    API --> JWT
-    API -. use .-> V1
-    API -. use .-> V2
-    API -. invoke .->ENDPOINTS
-    V1 -. use .-> DTOS
-    V2 -. use .-> DTOS
-
-
-    %% Authentication flow
-    JWT --> AUTH
-
-
-    %% Application flow
-    MIDDLEWARE --> ENDPOINTS
-    MIDDLEWARE --> E1
-    MIDDLEWARE --> E2
-    MIDDLEWARE --> E3
-    MIDDLEWARE --> E4
-    ENDPOINTS --> REPO
-    REPO --> ENTITIES
-    ENTITIES --> DTOS
-
-    %% Data flow
+    HTTP --> KESTREL
+    ACTIONS --> REPO
+    REPO --> ENTITY
+    ENTITY -.maps to.-> DTO
     REPO --> EF
-    EF --> CONTEXT
-    MIGRATIONS --> CONTEXT
-    CONTEXT --> Database
+    EF <--> DB
 
-    %% Infrastructure
-    DOCKER --> Database
-    CONFIG --> API
-
-    %% Styling
-    style AppLayer fill:#d3d3d3
-    style BusinessLayer fill:#d3d3d3
-    style Infrastructure fill:#d3d3d3
-    style APIGateway fill:#d3d3d3
-    style DataLayer fill:#d3d3d3
-    style AuthLayer fill:#d3d3d3
-    style ClientLayer fill:#d3d3d3
-
-
+    style Client fill:#e3f2fd
+    style API fill:#c8e6c9
+    style Middleware fill:#b2dfdb
+    style Controller fill:#a5d6a7
+    style Business fill:#fff9c4
+    style Data fill:#ffccbc
 ```
 
 #### Key Architectural Components
@@ -174,10 +133,19 @@ docker compose up -d mssql-infra
 ```
 
 
+### Scripts Organization
+
+All project scripts are organized in the `scripts/` folder for better maintainability:
+
+- **Build scripts:** `scripts/build.ps1` (Windows) and `scripts/build.sh` (Linux/macOS)
+- **Test scripts:** `scripts/test.ps1` (Windows) and `scripts/test.sh` (Linux/macOS)
+- **Database scripts:** `scripts/drop-db.ps1` (Windows)
+- **Token generation:** `scripts/generate-jwt-tokens.ps1` (Windows)
+
 ### Create user jwts for local test via script (Recommended)
 
 ```powershell
-.\generate-jwt-tokens.ps1
+.\scripts\generate-jwt-tokens.ps1
 ```
 
 - The scripts will overwrite any existing token values in local-test.http
@@ -231,29 +199,29 @@ The generated JWT tokens have an expiration of approximately 90 days, making the
 
 ```powershell
 # Build in Debug mode
-.\build.ps1
+.\scripts\build.ps1
 
 # Clean and build
-.\build.ps1 -Clean
+.\scripts\build.ps1 -Clean
 
 # Build in Release mode
-.\build.ps1 -Release
+.\scripts\build.ps1 -Release
 ```
 
 **Linux/macOS (Bash):**
 
 ```bash
 # Make the script executable (first time only)
-chmod +x build.sh
+chmod +x scripts/build.sh
 
 # Build in Debug mode
-./build.sh
+./scripts/build.sh
 
 # Clean and build
-./build.sh --clean
+./scripts/build.sh --clean
 
 # Build in Release mode
-./build.sh --release
+./scripts/build.sh --release
 ```
 
 **Or using dotnet CLI directly:**
@@ -348,53 +316,53 @@ The project includes automated unit tests for the API controllers and repositori
 
 ```powershell
 # Run all tests with build
-.\test.ps1
+.\scripts\test.ps1
 
 # Run tests without rebuilding (faster)
-.\test.ps1 -NoBuild
+.\scripts\test.ps1 -NoBuild
 
 # Run specific tests using a filter
-.\test.ps1 -Filter "GetProductV1*"
+.\scripts\test.ps1 -Filter "GetProductV1*"
 
 # Run tests with detailed output
-.\test.ps1 -Detailed
+.\scripts\test.ps1 -Detailed
 
 # Run tests with code coverage
-.\test.ps1 -Coverage
+.\scripts\test.ps1 -Coverage
 
 # Run tests with coverage (no build)
-.\test.ps1 -NoBuild -Coverage
+.\scripts\test.ps1 -NoBuild -Coverage
 
 # Combine options
-.\test.ps1 -NoBuild -Filter "GetAllProducts*" -Detailed
+.\scripts\test.ps1 -NoBuild -Filter "GetAllProducts*" -Detailed
 ```
 
 **Linux/macOS (Bash):**
 
 ```bash
 # Make the script executable (first time only)
-chmod +x test.sh
+chmod +x scripts/test.sh
 
 # Run all tests with build
-./test.sh
+./scripts/test.sh
 
 # Run tests without rebuilding (faster)
-./test.sh --no-build
+./scripts/test.sh --no-build
 
 # Run specific tests using a filter
-./test.sh --filter "GetProductV1*"
+./scripts/test.sh --filter "GetProductV1*"
 
 # Run tests with detailed output
-./test.sh --detailed
+./scripts/test.sh --detailed
 
 # Run tests with code coverage
-./test.sh --coverage
+./scripts/test.sh --coverage
 
 # Run tests with coverage (no build)
-./test.sh --no-build --coverage
+./scripts/test.sh --no-build --coverage
 
 # Combine options
-./test.sh --no-build --filter "GetAllProducts*" --detailed
+./scripts/test.sh --no-build --filter "GetAllProducts*" --detailed
 ```
 
 **Test script features:**
@@ -428,5 +396,5 @@ dotnet test --filter "GetProductV1*"
 ### Drop the database
 
 ```powershell
-.\drop-db.ps1
+.\scripts\drop-db.ps1
 ```

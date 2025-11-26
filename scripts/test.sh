@@ -3,11 +3,11 @@
 # Test runner for Eshop API project using .NET 8 SDK
 #
 # Usage:
-#   ./test.sh                    - Run all tests with build
-#   ./test.sh --no-build         - Run tests without rebuilding
-#   ./test.sh --coverage         - Run tests with code coverage
-#   ./test.sh --filter "Pattern" - Run specific tests matching pattern
-#   ./test.sh --detailed         - Show detailed test output
+#   ./scripts/test.sh                    - Run all tests with build
+#   ./scripts/test.sh --no-build         - Run tests without rebuilding
+#   ./scripts/test.sh --coverage         - Run tests with code coverage
+#   ./scripts/test.sh --filter "Pattern" - Run specific tests matching pattern
+#   ./scripts/test.sh --detailed         - Show detailed test output
 #
 
 set -e  # Exit on error
@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --help|-h)
-            echo "Usage: ./test.sh [OPTIONS]"
+            echo "Usage: ./scripts/test.sh [OPTIONS]"
             echo ""
             echo "Options:"
             echo "  --no-build, -n           Skip building (faster for repeated runs)"
@@ -55,10 +55,10 @@ while [[ $# -gt 0 ]]; do
             echo "  --help, -h               Show this help message"
             echo ""
             echo "Examples:"
-            echo "  ./test.sh"
-            echo "  ./test.sh --no-build"
-            echo "  ./test.sh --coverage"
-            echo "  ./test.sh --filter 'GetProductV1*' --detailed"
+            echo "  ./scripts/test.sh"
+            echo "  ./scripts/test.sh --no-build"
+            echo "  ./scripts/test.sh --coverage"
+            echo "  ./scripts/test.sh --filter 'GetProductV1*' --detailed"
             exit 0
             ;;
         *)
