@@ -24,7 +24,7 @@ Authorization: Bearer {{ADMIN_WRITE_TOKEN}}
     "imageUri": "https://dummyimage.com/200x200/eee/000"
 }
 
-### Add product -- 
+### Add product --
 # expect 403
 POST https://localhost:{{PORT}}/products HTTP/1.1
 content-type: application/json
