@@ -2,6 +2,128 @@
 
 A demo API built on top of .NET Core 8 with MVC API Controllers
 
+### Architecture
+
+```mermaid
+flowchart TB
+    subgraph ClientLayer["Client Layer"]
+        C1[REST Client]
+        C2[Swagger UI]
+        C3[HTTP Client]
+    end
+
+    subgraph APIGateway["API Gateway"]
+        API["Minimal API"]
+        V1[API Version 1.0]
+        V2[API Version 2.0]
+    end
+
+    subgraph AuthLayer["Authentication and Authorization"]
+        JWT[JWT Bearer Authentication]
+        AUTH["Authorization Policies"]
+    end
+
+    subgraph AppLayer["Application Layer"]
+        ENDPOINTS["Products Endpoints"]
+        MIDDLEWARE["Middleware Pipeline"]
+        E1["Exception Handler"]
+        E2["HTTP Logging"]
+        E3["CORS"]
+        E4["Parameter Validation"]
+    end
+
+    subgraph BusinessLayer["Business Layer"]
+        REPO["Repositories"]
+        ENTITIES["Domain Entities"]
+        DTOS["DTOs"]
+    end
+
+    subgraph DataLayer["Data Layer"]
+        EF[Entity Framework Core]
+        CONTEXT["EshopContext<br/>DbContext"]
+        MIGRATIONS["EF Migrations"]
+    end
+
+    subgraph Infrastructure["Infrastructure"]
+        DOCKER["Docker Container<br/>SQL Server"]
+        CONFIG["Configuration"]
+    end
+
+    Database[("MS Sql Database")]
+
+    %% Client connections
+    C1 --> API
+    C2 --> API
+    C3 --> API
+
+    %% API flow
+    API --> JWT
+    API -. use .-> V1
+    API -. use .-> V2
+    API -. invoke .->ENDPOINTS
+    V1 -. use .-> DTOS
+    V2 -. use .-> DTOS
+
+
+    %% Authentication flow
+    JWT --> AUTH
+
+
+    %% Application flow
+    MIDDLEWARE --> ENDPOINTS
+    MIDDLEWARE --> E1
+    MIDDLEWARE --> E2
+    MIDDLEWARE --> E3
+    MIDDLEWARE --> E4
+    ENDPOINTS --> REPO
+    REPO --> ENTITIES
+    ENTITIES --> DTOS
+
+    %% Data flow
+    REPO --> EF
+    EF --> CONTEXT
+    MIGRATIONS --> CONTEXT
+    CONTEXT --> Database
+
+    %% Infrastructure
+    DOCKER --> Database
+    CONFIG --> API
+
+    %% Styling
+    style AppLayer fill:#d3d3d3
+    style BusinessLayer fill:#d3d3d3
+    style Infrastructure fill:#d3d3d3
+    style APIGateway fill:#d3d3d3
+    style DataLayer fill:#d3d3d3
+    style AuthLayer fill:#d3d3d3
+    style ClientLayer fill:#d3d3d3
+
+
+```
+
+#### Key Architectural Components
+
+**🔐 Security Features**
+- JWT Bearer token authentication
+- Role-based authorization (Staff/Admin roles)
+- Scope-based permissions (read/write access)
+- CORS configuration for cross-origin requests
+
+**📊 API Features**
+- RESTful API design with CRUD operations
+- API versioning (v1.0 and v2.0)
+- Swagger/OpenAPI documentation
+- Request/response logging
+- Global exception handling
+- Parameter validation
+
+**💾 Data Management**
+- Entity Framework Core ORM
+- Code-first migrations
+- Repository pattern implementation
+
+
+
 ### Prerequisite
 
 - .NET 8 SDK
